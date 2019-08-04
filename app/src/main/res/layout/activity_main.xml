@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:gravity="center">
+
+    <com.example.funneteaseindicator.FNI
+            android:id="@+id/fni"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_width="300dp"
+            app:radius_round="24dp"
+            app:title_color="@android:color/holo_red_light"
+            app:selected_title_color="@android:color/white"
+            android:layout_height="45dp"/>
+    <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            tools:context=".MainActivity"/>
+</LinearLayout>
