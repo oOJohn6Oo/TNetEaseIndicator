@@ -1,19 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="title_first_text" format="string"/>
-    <attr name="title_second_text" format="string"/>
-    <attr name="title_text_size" format="float"/>
-    <attr name="selected_title_color" format="color"/>
-    <attr name="title_color" format="color"/>
-    <attr name="radius_round" format="dimension"/>
+    <!--背景-->
+    <attr name="bgd_text_size" format="dimension"/>
+    <attr name="bgd_text_color" format="color"/>
+    <attr name="bgd_radius" format="dimension"/>
+    <attr name="bgd_radius_percent" format="fraction"/>
+    <attr name="bgd_color" format="color"/>
+
+    <!--前景-->
+    <attr name="fgd_text_size" format="dimension"/>
+    <attr name="fgd_text_color" format="color"/>
+    <attr name="fgd_radius" format="fraction"/>
+    <attr name="fgd_radius_percent" format="fraction"/>
+    <attr name="fgd_color" format="color"/>
+
+    <!--一起的圆角-->
+    <attr name="layout_radius" format="dimension"/>
+    <attr name="radius_percent" format="fraction"/>
+
+    <attr name="enable_elevation" format="boolean"/>
+    <attr name="enable_stroke" format="boolean"/>
+    <attr name="elevation" format="dimension"/>
+    <attr name="stroke_width" format="dimension"/>
     <declare-styleable name="FNI">
-        <attr name="title_first_text"/>
-        <attr name="title_second_text"/>
-        <attr name="title_text_size"/>
-        <attr name="android:layout_width"/>
-        <attr name="android:layout_height"/>
-        <attr name="selected_title_color"/>
-        <attr name="title_color"/>
-        <attr name="radius_round"/>
+        <attr name="android:entries"/>
+        <attr name="bgd_text_size"/>
+        <attr name="bgd_text_color"/>
+        <attr name="bgd_radius"/>
+        <attr name="bgd_radius_percent"/>
+        <attr name="bgd_color"/>
+
+        <attr name="fgd_text_size"/>
+        <attr name="fgd_text_color"/>
+        <attr name="fgd_radius"/>
+        <attr name="fgd_radius_percent"/>
+        <attr name="fgd_color"/>
+
+        <attr name="layout_radius"/>
+        <attr name="radius_percent"/>
+
+        <attr name="enable_elevation"/>
+        <attr name="elevation"/>
+        <attr name="enable_stroke"/>
+        <attr name="stroke_width"/>
     </declare-styleable>
 </resources>

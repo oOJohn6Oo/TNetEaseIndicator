@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="demo_titles">
+            <item>Title1</item>
+            <item>Title2</item>
+            <item>Title3</item>
+    </string-array>
+</resources>
