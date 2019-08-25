@@ -70,13 +70,13 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
             if (layoutRadius == -1f) { // 没有同时设定前后固定radius
                 bgdRadiusPercent = typedArray.getDimension(R.styleable.FNI_bgd_radius_percent, -1f)
                 if (bgdRadiusPercent == -1f) //没有设定背景百分比radius
-                    bgdRadius = typedArray.getDimension(R.styleable.FNI_bgd_radius, 24f)
+                    bgdRadius = typedArray.getDimension(R.styleable.FNI_bgd_radius, 33f)
                 else
                     isBgdPercentRadius = true
 
                 fgdRadiusPercent = typedArray.getDimension(R.styleable.FNI_fgd_radius_percent, -1f)
                 if (fgdRadiusPercent == -1f) //没有设定前景百分比radius
-                    fgdRadius = typedArray.getDimension(R.styleable.FNI_fgd_radius, 24f)
+                    fgdRadius = typedArray.getDimension(R.styleable.FNI_fgd_radius, 33f)
                 else
                     isFgdPercentRadius = true
             } else {
@@ -183,20 +183,10 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
 //        }
     }
 
-
     fun onPagerScrolling(position: Int, positionOffset: Float) {
         if (!isViewScrolling) {
             lineLeft = (titleWidth * (position + positionOffset)).toInt()
-            recycler_view_fgd.refreshDrawableState()
-//            setViewOutLine()
-        }
-    }
-
-    private fun setViewOutLine() {
-        recycler_view_fgd.outlineProvider = object : ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: Outline) {
-                outline.setRoundRect(lineLeft, 0, lineLeft + titleWidth, view.height, fgdRadius)
-            }
+            recycler_view_fgd.invalidateOutline()
         }
     }
 
@@ -213,7 +203,7 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
             fgdRadius = recycler_view_fgd.height * fgdRadiusPercent
 
         titleWidth = if (enableElevation)
-            ((measuredWidth - mElevation * 2) / titles.size).toInt()
+            ((measuredWidth - mElevation * 2*resources.displayMetrics.density+0.5) / titles.size).toInt()
         else
             measuredWidth / titles.size
     }
