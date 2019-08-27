@@ -31,10 +31,6 @@ class TitleAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as TitleHolder).textView.text = titles[position]
-        holder.textView.setOnClickListener{
-            if(listener!=null)
-                listener?.onItemSelected(position)
-        }
 
     }
 
