@@ -145,8 +145,6 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
 //  前景      手势监听
         recycler_view_fgd.setOnTouchListener { view, event ->
 
-
-
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     touchX = event.rawX.toInt()
@@ -156,12 +154,12 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
                 }
                 MotionEvent.ACTION_MOVE -> {
                     isMoveing = true
-                    val flaglenth = view.width/3
+                    val flaglenth = view.width/titles.size
                     val disX = event.rawX - touchX
                     lineLeft = (lineLeft + disX).toInt()
                     if (lineLeft<=0)lineLeft = 0
                     else if (lineLeft>=flaglenth*2) lineLeft = flaglenth*2
-                        setViewOutLine()
+                    setViewOutLine()
                     Log.e("lineLeft:"+ lineLeft,"disX"+disX + "view.width:" + view.width )
                     touchX = event.rawX.toInt()
                     false
@@ -175,7 +173,6 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
                         performClick()
                         this.postDelayed({ isViewScrolling = false }, 300)
                     }
-
                     false
                 }
                 else -> false
@@ -220,43 +217,18 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
     }
 
 
-   private fun setMoveLocation(){
-       val flaglenth = recycler_view_bgd.width/6
-       when{
-           lineLeft < flaglenth-> {
-               lineLeft = 0
-               onItemSelectedListener?.onItemSelected(0)
-           }
-           lineLeft in flaglenth..3*flaglenth -> {
-               lineLeft = flaglenth*2
-               onItemSelectedListener?.onItemSelected(1)
-           }
-           lineLeft>3*flaglenth -> {
-               lineLeft = flaglenth*4
-               onItemSelectedListener?.onItemSelected(2)
-           }
-       }
+   private fun setMoveLocation( ){
+       val position = (lineLeft + titleWidth/2)/titleWidth
+       lineLeft = titleWidth*position
        setViewOutLine()
+       onItemSelectedListener?.onItemSelected(position)
    }
 
 
     private fun setLocation(){
-        val flaglenth = recycler_view_bgd.width/3
-        when{
-            lineLeft < flaglenth-> {
-                lineLeft = 0
-                onItemSelectedListener?.onItemSelected(0)
-            }
-            lineLeft in flaglenth..2*flaglenth -> {
-                lineLeft = flaglenth
-                onItemSelectedListener?.onItemSelected(1)
-            }
-            lineLeft>2*flaglenth -> {
-                lineLeft = flaglenth*2
-                onItemSelectedListener?.onItemSelected(2)
-            }
-        }
-        setViewOutLine()
+        val position = lineLeft/titleWidth
+        lineLeft = (lineLeft/titleWidth)*titleWidth
+        onItemSelectedListener?.onItemSelected(position)
     }
 
 }
