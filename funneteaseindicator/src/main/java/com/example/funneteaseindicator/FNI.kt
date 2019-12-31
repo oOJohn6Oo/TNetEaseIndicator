@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
@@ -43,6 +44,10 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
     private var isBgdPercentRadius = false
     private var isFgdPercentRadius = false
     private var onItemSelectedListener: OnItemSelectedListener? = null
+
+    private var touchX = 0
+    private var isMoveing = false
+
 
     /**
      * 默认按照网易云音乐样式处理
@@ -129,64 +134,57 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
          */
         recycler_view_fgd.setBackgroundColor(fgdColor)
         recycler_view_fgd.clipToOutline = true  // 只显示部分区域
-        recycler_view_fgd.requestDisallowInterceptTouchEvent(true)// 由该view处理所有触摸操作
+       recycler_view_fgd.requestDisallowInterceptTouchEvent(false)// 由该view处理所有触摸操作
 
         recycler_view_bgd.layoutManager = GridLayoutManager(context, titles.size)
         recycler_view_fgd.layoutManager = GridLayoutManager(context, titles.size)
         recycler_view_fgd.adapter = TitleAdapter(context, fgdTextSize, fgdTextColor, titles)
         recycler_view_bgd.adapter = TitleAdapter(context, bgdTextSize, bgdTextColor, titles)
+        setViewOutLine()
 
+//  前景      手势监听
+        recycler_view_fgd.setOnTouchListener { view, event ->
 
-        val pro = object : ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: Outline) {
-                outline.setRoundRect(lineLeft, 0, lineLeft + titleWidth, view.height, fgdRadius)
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    touchX = event.rawX.toInt()
+                    lineLeft = event.x.toInt()
+                    setLocation()
+                    false
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    isMoveing = true
+                    val flaglenth = view.width/titles.size
+                    val disX = event.rawX - touchX
+                    lineLeft = (lineLeft + disX).toInt()
+                    if (lineLeft<=0)lineLeft = 0
+                    else if (lineLeft>=flaglenth*2) lineLeft = flaglenth*2
+                    setViewOutLine()
+                    Log.e("lineLeft:"+ lineLeft,"disX"+disX + "view.width:" + view.width )
+                    touchX = event.rawX.toInt()
+                    false
+                }
+                MotionEvent.ACTION_UP -> {
+          //           防止双向绑定导致的 view 闪现
+                    if (isMoveing ){
+                        isViewScrolling = true
+                        isMoveing = false
+                        setMoveLocation()
+                        performClick()
+                        this.postDelayed({ isViewScrolling = false }, 300)
+                    }
+                    false
+                }
+                else -> false
             }
+
         }
-        recycler_view_fgd.outlineProvider = pro
-//        手势监听
-//        recycler_view_fgd.setOnTouchListener { view, event ->
-//            when (event.action) {
-//                MotionEvent.ACTION_DOWN -> {
-//                    if (lineLeft == 0 && event.x > titleWidth) {
-//                        lineLeft += titleWidth/2
-//                        setViewOutLine(lineLeft)
-//                    } else if (lineLeft == titleWidth && event.x <= titleWidth) {
-//                        lineLeft = 0
-//                        line_view.layoutParams = params
-//                        setViewOutLine(lineLeft, lineLeft + (titleWidth))
-//                    }
-//                    touchX = event.rawX
-//                    false
-//                }
-//                MotionEvent.ACTION_MOVE -> {
-//                    val disX = event.rawX - touchX
-//                    if ((lineLeft + disX) >= 0 && (lineLeft + disX) <= view.width) {
-//                        lineLeft = (lineLeft + disX).toInt()
-//                        setViewOutLine()
-//                    }
-//                    touchX = event.rawX
-//                    false
-//                }
-//                MotionEvent.ACTION_UP -> {
-//                     防止双向绑定导致的 view 闪现
-//                    isViewScrolling = true
-//                    val selectedItem = lineLeft/titleWidth
-//                    if (onItemSelectedListener != null)
-//                        onItemSelectedListener?.onItemSelected(0)
-//                    this.postDelayed({ isViewScrolling = false }, 300)
-//                    performClick()
-//                    true
-//                }
-//                else -> true
-//            }
-//
-//        }
     }
 
     fun onPagerScrolling(position: Int, positionOffset: Float) {
         if (!isViewScrolling) {
             lineLeft = (titleWidth * (position + positionOffset)).toInt()
-            recycler_view_fgd.invalidateOutline()
+           setViewOutLine()
         }
     }
 
@@ -206,6 +204,31 @@ class FNI @JvmOverloads constructor(context: Context, attrs: AttributeSet? = nul
             ((measuredWidth - mElevation * 2*resources.displayMetrics.density+0.5) / titles.size).toInt()
         else
             measuredWidth / titles.size
+    }
+
+    private fun setViewOutLine(){
+        val pro = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(lineLeft, 0, lineLeft + titleWidth, view.height, fgdRadius)
+            }
+        }
+        recycler_view_fgd.outlineProvider = pro
+        recycler_view_fgd.invalidateOutline()
+    }
+
+
+   private fun setMoveLocation( ){
+       val position = (lineLeft + titleWidth/2)/titleWidth
+       lineLeft = titleWidth*position
+       setViewOutLine()
+       onItemSelectedListener?.onItemSelected(position)
+   }
+
+
+    private fun setLocation(){
+        val position = lineLeft/titleWidth
+        lineLeft = (lineLeft/titleWidth)*titleWidth
+        onItemSelectedListener?.onItemSelected(position)
     }
 
 }
